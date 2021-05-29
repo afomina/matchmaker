@@ -4,8 +4,6 @@ import andrianova.matchmaker.config.AppSettings
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 
 @Service
 class OldUsersFinder {
@@ -26,7 +24,7 @@ class OldUsersFinder {
                 }
                 var groupToFill = group
                 while (groupToFill.size() < appSettings.groupSize) {
-                    val nearestGroup = matchMaker.findNearestGroup(groupToFill.getAverage()!!)!!
+                    val nearestGroup = matchMaker.findNearestGroup(groupToFill) ?: break
                     groupToFill = matchMaker.mergeGroups(groupToFill, nearestGroup)
                 }
             }

@@ -44,13 +44,30 @@ class MatchMaker {
         }
     }
 
-    fun findNearestGroup(user: UserAttributes, maxDistance: Double = Double.MAX_VALUE): Match? {
+    fun findNearestGroup(group1: Match): Match? {
+        var minDistance = Double.MAX_VALUE
+        var nearestGroup: Match? = null
+        synchronized(groups) {
+            for (group in groups) {
+                if (group != group1) {
+                    val distance = Distance.calculate(group.getAverage()!!, group1.getAverage()!!)
+                    if (distance < minDistance) {
+                        minDistance = distance
+                        nearestGroup = group
+                    }
+                }
+            }
+        }
+        return nearestGroup
+    }
+
+    fun findNearestGroup(user: UserAttributes, maxDistance: Double): Match? {
         var minDistance = Double.MAX_VALUE
         var nearestGroup: Match? = null
         synchronized(groups) {
             for (group in groups) {
                 val distance = Distance.calculate(group.getAverage()!!, user)
-                if (distance <= maxDistance && distance < minDistance && distance != 0.0) {
+                if (distance <= maxDistance && distance < minDistance) {
                     minDistance = distance
                     nearestGroup = group
                 }
